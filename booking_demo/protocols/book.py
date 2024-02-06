@@ -43,7 +43,7 @@ async def handle_book_request(ctx: Context, sender: str, msg: BookTableRequest):
         ctx.storage.set(msg.table_number, table.dict())
     else:
         
-        # if it doesn't, return false (not success)
+        # if it doesn't, return false
         success = False
  
     # send the response
