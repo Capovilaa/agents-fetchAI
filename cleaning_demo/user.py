@@ -1,0 +1,94 @@
+from datetime import datetime, timedelta
+from pytz import utc
+
+# import protocols
+from protocols.cleaning import (
+    ServiceBooking,
+    BookingResponse,
+    ServiceRequest,
+    ServiceResponse,
+)
+from protocols.cleaning.models import ServiceType
+from uagents import Agent, Context
+from uagents.setup import fund_agent_if_low
+
+# cleaner's address
+CLEANER_ADDRESS = "agent1qdfdx6952trs028fxyug7elgcktam9f896ays6u9art4uaf75hwy2j9m87w"
+
+# create user agent
+user = Agent(
+    name="user",
+    port=8000,
+    seed="cleaning user recovery phrase",
+    endpoint={
+        "http://127.0.0.1:8000/submit": {},
+    },
+)
+
+# check user's balance
+fund_agent_if_low(user.wallet.address())
+
+# request to use
+request = ServiceRequest(
+    user=user.name,
+    location="London Kings Cross",
+    time_start=utc.localize(datetime.fromisoformat("2023-04-10 16:00:00")),
+    duration=timedelta(hours=4),
+    services=[ServiceType.WINDOW, ServiceType.LAUNDRY],
+    max_price=60,
+)
+ 
+MARKDOWN = 0.8
+
+# user will in every 3 seconds send a request
+@user.on_interval(period=3.0, messages=ServiceRequest)
+async def interval(ctx: Context):
+    
+    # use storage
+    ctx.storage.set("markdown", MARKDOWN)
+    completed = ctx.storage.get("completed")
+ 
+    # send request if isn't completed
+    if not completed:
+        ctx.logger.info(f"Requesting cleaning service: {request}")
+        await ctx.send(CLEANER_ADDRESS, request)
+
+# when user receive a response from request 
+@user.on_message(ServiceResponse, replies=ServiceBooking)
+async def handle_query_response(ctx: Context, sender: str, msg: ServiceResponse):
+    markdown = ctx.storage.get("markdown")
+    
+    # by response
+    if msg.accept:
+        ctx.logger.info("Cleaner is available, attempting to book now")
+        
+        # prepare booking's data
+        booking = ServiceBooking(
+            location=request.location,
+            time_start=request.time_start,
+            duration=request.duration,
+            services=request.services,
+            price=markdown * msg.price,
+        )
+        
+        # send back to book
+        await ctx.send(sender, booking)
+    else:
+        
+        # show that's not available
+        ctx.logger.info("Cleaner is not available - nothing more to do")
+        ctx.storage.set("completed", True)
+
+# when user receives a booking response 
+@user.on_message(BookingResponse, replies=set())
+async def handle_book_response(ctx: Context, _sender: str, msg: BookingResponse):
+    if msg.success:
+        ctx.logger.info("Booking was successful")
+    else:
+        ctx.logger.info("Booking was UNSUCCESSFUL")
+ 
+    # set on storage that booking was completed
+    ctx.storage.set("completed", True)
+ 
+if __name__ == "__main__":
+    user.run()
