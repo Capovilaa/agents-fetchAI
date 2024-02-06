@@ -1,68 +1,85 @@
-Projeto criado para estudos gerais sobre agentes Fetch.AI
+# uAgent
 
-cd\uAgents
+Projeto criado para estudos gerais sobre agentes fetch.
+
+## Instalação
+
+```bash
 python -m venv .venv
 .venv\scripts\activate
 pip install -r requirements.txt
------------------------------------------------------------------------------------------------------------
-Lógica que foi possível entender até agora:
+```
 
-1° Devemos realizar os imports necessários
+## Uso
 
-por padrão de uagents devemos importar Agent para criar um agente e
-Context para conseguir realizar algumas funções
+```python
+python .\cleaning_demo\user.py
+```
 
-outras bibliotecas podem ser importadas, isso vai depender
-do caso de uso do código
+## Lógica que foi possível entender até agora:
+
+## Devemos realizar os imports necessários
+
+Por padrão de uagents devemos importar Agent para criar um agente e
+Context para conseguir realizar algumas funções.
+
+Outras bibliotecas podem ser importadas, isso vai depender
+do caso de uso do código.
 
 
-2° Devemos criar a estrutura das mensagens com o class Model,
 
-esse que vai permitir definirmos qual o tipo de mensagem aceito
+## Devemos criar a estrutura das mensagens com o class Model
 
-podem ser criados mais de uma estrutura de mensagem
+Esse que vai permitir definirmos qual o tipo de mensagem aceito.
 
-isso será levado em conta para saber qual função deve ser
+Podem ser criados mais de uma estrutura de mensagem.
+
+Isso será levado em conta para saber qual função deve ser
 chamada com base nos parâmetros recebidos quando comparados
-aos Models
+aos Models.
 
 
-3° Devemos criar os agentes
 
-criação dos agentes devem ser feitos com a class Agent, que
-foi importada no início
+## Devemos criar os agentes
 
-
-caso seja necessário, também podemos fazer algumas funções e 
-lógicas fora dos comportamentos
+Criação dos agentes devem ser feitos com a class Agent, que
+foi importada no início.
 
 
-4° Devemos criar os comportamentos dos agentes e quando eles vão ocorrer
-
-assim que quisermos, podemos usar @agent para definir uma função
-que será chamada assim que um intervalo, mensagem etc for definido
-
-esses comportamentos vão variar de acordo com cada Model criado, sendo
-possível criar toda a lógica com isso
-
-a função que será executada deve ser do tipo assíncrona, para que
-todas as etapas sejam finalizadas por completo
-
-nos parâmetros da função, devemos passar ctx : Context para ter acesso às
-funções, sender : str para ver quem mandou a mensagem, msg : TipoMensageDefinido
-para ver qual foi a mensagem que foi recebida
-
-toda lógica do que vai acontecer quando a mensagem for recebida ou pelo intervalo
-definido, deve ser codificada dentro da função
-
-mais de um comportamento pode ser criado por agente
+Caso seja necessário, também podemos fazer algumas funções e 
+lógicas fora dos comportamentos.
 
 
-5° Devemos criar bureau (caso seja necessário)
+## Devemos criar os comportamentos dos agentes e quando eles vão ocorrer
 
-isso permite que mais de 1 agente seja executado por arquivo ao
-mesmo tempo
+Assim que quisermos, podemos usar @agent para definir uma função
+que será chamada assim que um intervalo, mensagem etc for definido.
 
-criamos e adicionamos os agentes necessários
+Esses comportamentos vão variar de acordo com cada Model criado, sendo
+possível criar toda a lógica com isso.
 
-chamamos bureau.run() no main do arquivo
+A função que será executada deve ser do tipo assíncrona, para que
+todas as etapas sejam finalizadas por completo.
+
+Nos parâmetros da função, devemos passar ctx : Context para ter acesso às funções, sender : str para ver quem mandou a mensagem, msg : TipoMensageDefinido
+para ver qual foi a mensagem que foi recebida.
+
+Toda lógica do que vai acontecer quando a mensagem for recebida ou pelo intervalo
+definido, deve ser codificada dentro da função.
+
+Mais de um comportamento pode ser criado por agente.
+
+
+
+## Devemos criar bureau (caso seja necessário)
+
+Isso permite que mais de 1 agente seja executado por arquivo ao
+mesmo tempo.
+
+Criamos e adicionamos os agentes necessários.
+
+Chamamos bureau.run() no main do arquivo.
+
+## Baseamento para desenvolvimento
+
+[fetch.ia](https://fetch.ai/docs/guides/agents/installing-uagent)
